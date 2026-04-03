@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediction Results</title>
+</head>
+<body>
+    <h1>Prediction Results</h1>
+
+    {% if single_result %}
+        <h2>Single Student Prediction</h2>
+        <p><strong>Predicted Class:</strong> {{ single_result.predicted_class }}</p>
+        <p><strong>Probability - At-Risk:</strong> {{ "%.4f"|format(single_result.prob_at_risk) }}</p>
+        <p><strong>Probability - Regular:</strong> {{ "%.4f"|format(single_result.prob_regular) }}</p>
+        <p><strong>Probability - Exceptional:</strong> {{ "%.4f"|format(single_result.prob_exceptional) }}</p>
+        <p><strong>Alert Flag:</strong> {{ single_result.alert_flag }}</p>
+        <p><strong>Reason Summary:</strong> {{ single_result.risk_reason_summary }}</p>
+    {% else %}
+        <p><strong>Total Students:</strong> {{ total_students }}</p>
+        <p><strong>At-Risk Students:</strong> {{ at_risk_count }}</p>
+        <p><strong>Regular Students:</strong> {{ regular_count }}</p>
+        <p><strong>Exceptional Students:</strong> {{ exceptional_count }}</p>
+
+        {% if actual_at_risk_available %}
+            <p>
+                <strong>Correctly Flagged At-Risk Students:</strong>
+                {{ correctly_flagged_at_risk }} out of {{ at_risk_count }}
+            </p>
+        {% else %}
+            <p>
+                <strong>Actual At-Risk Comparison:</strong>
+                Not available for this upload because no true 3-class label column was provided.
+            </p>
+        {% endif %}
+
+        {% if output_filename %}
+            <br>
+            <a href="{{ url_for('main.download_file', filename=output_filename) }}">
+                Download Predictions CSV
+            </a>
+        {% endif %}
+    {% endif %}
+
+    <br><br>
+    <a href="{{ url_for('main.index') }}">Go Back</a>
+</body>
+</html>

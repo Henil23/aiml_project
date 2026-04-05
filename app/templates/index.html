@@ -4,106 +4,183 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Risk Prediction System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>Student Risk Prediction System</h1>
+    <div class="container">
+        <h1 class="page-title">Student Risk Prediction System</h1>
+        <p class="page-subtitle">
+            Upload a CSV file for bulk prediction or manually enter a single student record.
+        </p>
 
-    <p>Use either CSV upload or manual single-student entry.</p>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="flash-container">
+                    {% for message in messages %}
+                        <div class="flash flash-error">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
 
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            <ul style="color: red;">
-                {% for message in messages %}
-                    <li>{{ message }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-    {% endwith %}
+        <div class="card">
+            <div class="card-header">
+                <h2 class="section-title">Upload CSV</h2>
+            </div>
 
-    <hr>
+            <form method="POST" enctype="multipart/form-data" class="upload-zone">
+                <input type="hidden" name="action" value="upload_csv">
 
-    <h2>Option 1: Upload CSV</h2>
-    <form method="POST" enctype="multipart/form-data">
-        <input type="hidden" name="action" value="upload_csv">
+                <p>Select a CSV file to predict At-Risk, Regular, and Exceptional students.</p>
+                <input type="file" name="file" id="file" accept=".csv" required>
+                <br><br>
+                <button type="submit" class="btn btn-primary">Upload and Predict</button>
+            </form>
+        </div>
 
-        <label for="file">Choose CSV file:</label><br><br>
-        <input type="file" name="file" id="file" accept=".csv" required><br><br>
-        <button type="submit">Upload and Predict</button>
-    </form>
+        <div class="card mt-3">
+            <div class="card-header">
+                <h2 class="section-title">Manual Entry</h2>
+            </div>
 
-    <hr>
+            <form method="POST">
+                <input type="hidden" name="action" value="manual_entry">
 
-    <h2>Option 2: Manual Entry (Single Student)</h2>
-    <form method="POST">
-        <input type="hidden" name="action" value="manual_entry">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="Course">Course</label>
+                        <input type="number" name="Course" id="Course" required>
+                    </div>
 
-        <label>Course:</label><br>
-        <input type="number" name="Course" required><br><br>
+                    <div class="form-group">
+                        <label for="DaytimeAttendance">Daytime/evening attendance</label>
+                        <input type="number" name="Daytime/evening attendance" id="DaytimeAttendance" required>
+                    </div>
+                </div>
 
-        <label>Daytime/evening attendance:</label><br>
-        <input type="number" name="Daytime/evening attendance" required><br><br>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="Displaced">Displaced</label>
+                        <input type="number" name="Displaced" id="Displaced" required>
+                    </div>
 
-        <label>Displaced:</label><br>
-        <input type="number" name="Displaced" required><br><br>
+                    <div class="form-group">
+                        <label for="SpecialNeeds">Educational special needs</label>
+                        <input type="number" name="Educational special needs" id="SpecialNeeds" required>
+                    </div>
+                </div>
 
-        <label>Educational special needs:</label><br>
-        <input type="number" name="Educational special needs" required><br><br>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="Debtor">Debtor</label>
+                        <input type="number" name="Debtor" id="Debtor" required>
+                    </div>
 
-        <label>Debtor:</label><br>
-        <input type="number" name="Debtor" required><br><br>
+                    <div class="form-group">
+                        <label for="FeesUpToDate">Tuition fees up to date</label>
+                        <input type="number" name="Tuition fees up to date" id="FeesUpToDate" required>
+                    </div>
+                </div>
 
-        <label>Tuition fees up to date:</label><br>
-        <input type="number" name="Tuition fees up to date" required><br><br>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="Gender">Gender</label>
+                        <input type="number" name="Gender" id="Gender" required>
+                    </div>
 
-        <label>Gender:</label><br>
-        <input type="number" name="Gender" required><br><br>
+                    <div class="form-group">
+                        <label for="ScholarshipHolder">Scholarship holder</label>
+                        <input type="number" name="Scholarship holder" id="ScholarshipHolder" required>
+                    </div>
+                </div>
 
-        <label>Scholarship holder:</label><br>
-        <input type="number" name="Scholarship holder" required><br><br>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="AgeAtEnrollment">Age at enrollment</label>
+                        <input type="number" step="any" name="Age at enrollment" id="AgeAtEnrollment" required>
+                    </div>
 
-        <label>Age at enrollment:</label><br>
-        <input type="number" step="any" name="Age at enrollment" required><br><br>
+                    <div class="form-group">
+                        <label for="S1Evaluations">Curricular units 1st sem (evaluations)</label>
+                        <input type="number" step="any" name="Curricular units 1st sem (evaluations)" id="S1Evaluations" required>
+                    </div>
+                </div>
 
-        <label>Curricular units 1st sem (evaluations):</label><br>
-        <input type="number" step="any" name="Curricular units 1st sem (evaluations)" required><br><br>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="S1Grade">Curricular units 1st sem (grade)</label>
+                        <input type="number" step="any" name="Curricular units 1st sem (grade)" id="S1Grade" required>
+                    </div>
 
-        <label>Curricular units 1st sem (grade):</label><br>
-        <input type="number" step="any" name="Curricular units 1st sem (grade)" required><br><br>
+                    <div class="form-group">
+                        <label for="S2Evaluations">Curricular units 2nd sem (evaluations)</label>
+                        <input type="number" step="any" name="Curricular units 2nd sem (evaluations)" id="S2Evaluations" required>
+                    </div>
+                </div>
 
-        <label>Curricular units 2nd sem (evaluations):</label><br>
-        <input type="number" step="any" name="Curricular units 2nd sem (evaluations)" required><br><br>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="S2Grade">Curricular units 2nd sem (grade)</label>
+                        <input type="number" step="any" name="Curricular units 2nd sem (grade)" id="S2Grade" required>
+                    </div>
 
-        <label>Curricular units 2nd sem (grade):</label><br>
-        <input type="number" step="any" name="Curricular units 2nd sem (grade)" required><br><br>
+                    <div class="form-group">
+                        <label for="UnemploymentRate">Unemployment rate</label>
+                        <input type="number" step="any" name="Unemployment rate" id="UnemploymentRate" required>
+                    </div>
+                </div>
 
-        <label>Unemployment rate:</label><br>
-        <input type="number" step="any" name="Unemployment rate" required><br><br>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="InflationRate">Inflation rate</label>
+                        <input type="number" step="any" name="Inflation rate" id="InflationRate" required>
+                    </div>
 
-        <label>Inflation rate:</label><br>
-        <input type="number" step="any" name="Inflation rate" required><br><br>
+                    <div class="form-group">
+                        <label for="GDP">GDP</label>
+                        <input type="number" step="any" name="GDP" id="GDP" required>
+                    </div>
+                </div>
 
-        <label>GDP:</label><br>
-        <input type="number" step="any" name="GDP" required><br><br>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="MaritalStatus">Marital status</label>
+                        <input type="number" name="Marital status" id="MaritalStatus" required>
+                    </div>
 
-        <label>Marital status:</label><br>
-        <input type="number" name="Marital status" required><br><br>
+                    <div class="form-group">
+                        <label for="Nationality">Nationality</label>
+                        <input type="number" name="Nationality" id="Nationality" required>
+                    </div>
+                </div>
 
-        <label>Nationality:</label><br>
-        <input type="number" name="Nationality" required><br><br>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="MotherQualification">Mother's qualification</label>
+                        <input type="number" name="Mother's qualification" id="MotherQualification" required>
+                    </div>
 
-        <label>Mother's qualification:</label><br>
-        <input type="number" name="Mother's qualification" required><br><br>
+                    <div class="form-group">
+                        <label for="FatherQualification">Father's qualification</label>
+                        <input type="number" name="Father's qualification" id="FatherQualification" required>
+                    </div>
+                </div>
 
-        <label>Father's qualification:</label><br>
-        <input type="number" name="Father's qualification" required><br><br>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="MotherOccupation">Mother's occupation</label>
+                        <input type="number" name="Mother's occupation" id="MotherOccupation" required>
+                    </div>
 
-        <label>Mother's occupation:</label><br>
-        <input type="number" name="Mother's occupation" required><br><br>
+                    <div class="form-group">
+                        <label for="FatherOccupation">Father's occupation</label>
+                        <input type="number" name="Father's occupation" id="FatherOccupation" required>
+                    </div>
+                </div>
 
-        <label>Father's occupation:</label><br>
-        <input type="number" name="Father's occupation" required><br><br>
-
-        <button type="submit">Predict Single Student</button>
-    </form>
+                <button type="submit" class="btn btn-primary btn-full">Predict Single Student</button>
+            </form>
+        </div>
+    </div>
 </body>
 </html>

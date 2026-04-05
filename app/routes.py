@@ -1,5 +1,6 @@
 import os
 import uuid
+import pandas as pd
 
 from flask import (
     Blueprint,
@@ -51,6 +52,15 @@ def index():
                 summary = predict_csv(upload_path)
                 output_filename = os.path.basename(summary["output_path"])
 
+                # load generated predictions so we can show tables on results page
+                results_df = pd.read_csv(summary["output_path"])
+
+                at_risk_rows = results_df[
+                    results_df["Predicted_Class"] == "At-risk"
+                ].to_dict(orient="records")
+
+                prediction_rows = results_df.to_dict(orient="records")
+
                 return render_template(
                     "results.html",
                     total_students=summary["total_students"],
@@ -61,6 +71,8 @@ def index():
                     correctly_flagged_at_risk=summary.get("correctly_flagged_at_risk"),
                     output_filename=output_filename,
                     single_result=None,
+                    at_risk_rows=at_risk_rows,
+                    prediction_rows=prediction_rows,
                 )
 
             except Exception as e:
@@ -107,6 +119,8 @@ def index():
                     correctly_flagged_at_risk=None,
                     output_filename=None,
                     single_result=single_result,
+                    at_risk_rows=None,
+                    prediction_rows=None,
                 )
 
             except Exception as e:

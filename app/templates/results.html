@@ -4,45 +4,203 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prediction Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>Prediction Results</h1>
-
-    {% if single_result %}
-        <h2>Single Student Prediction</h2>
-        <p><strong>Predicted Class:</strong> {{ single_result.predicted_class }}</p>
-        <p><strong>Probability - At-Risk:</strong> {{ "%.4f"|format(single_result.prob_at_risk) }}</p>
-        <p><strong>Probability - Regular:</strong> {{ "%.4f"|format(single_result.prob_regular) }}</p>
-        <p><strong>Probability - Exceptional:</strong> {{ "%.4f"|format(single_result.prob_exceptional) }}</p>
-        <p><strong>Alert Flag:</strong> {{ single_result.alert_flag }}</p>
-        <p><strong>Reason Summary:</strong> {{ single_result.risk_reason_summary }}</p>
-    {% else %}
-        <p><strong>Total Students:</strong> {{ total_students }}</p>
-        <p><strong>At-Risk Students:</strong> {{ at_risk_count }}</p>
-        <p><strong>Regular Students:</strong> {{ regular_count }}</p>
-        <p><strong>Exceptional Students:</strong> {{ exceptional_count }}</p>
-
-        {% if actual_at_risk_available %}
-            <p>
-                <strong>Correctly Flagged At-Risk Students:</strong>
-                {{ correctly_flagged_at_risk }} out of {{ at_risk_count }}
-            </p>
-        {% else %}
-            <p>
-                <strong>Actual At-Risk Comparison:</strong>
-                Not available for this upload because no true 3-class label column was provided.
-            </p>
-        {% endif %}
-
+    <div class="container">
+        <h1 class="page-title">Prediction Results</h1>
+        <p class="page-subtitle">Model output for the uploaded CSV or manual student entry.</p>
+        <div class="btn-actions">
         {% if output_filename %}
-            <br>
-            <a href="{{ url_for('main.download_file', filename=output_filename) }}">
-                Download Predictions CSV
-            </a>
+        <a href="{{ url_for('main.download_file', filename=output_filename) }}" class="btn btn-download">
+            Download Predictions CSV
+        </a>
         {% endif %}
-    {% endif %}
+        <a href="{{ url_for('main.index') }}" class="btn btn-back">Go Back</a>
+        </div>
 
-    <br><br>
-    <a href="{{ url_for('main.index') }}">Go Back</a>
+        {% if single_result %}
+            <div class="prediction-result {% if single_result.predicted_class == 'At-risk' %}at-risk-result{% endif %}">
+                <div class="prediction-result-header">
+                    <span class="prediction-class {% if single_result.predicted_class == 'At-risk' %}at-risk{% elif single_result.predicted_class == 'Regular' %}regular{% else %}exceptional{% endif %}">
+                        {{ single_result.predicted_class }}
+                    </span>
+
+                    {% if single_result.alert_flag == 1 %}
+                        <span class="badge badge-alert">Flagged</span>
+                    {% elif single_result.predicted_class == 'Regular' %}
+                        <span class="badge badge-regular">Regular</span>
+                    {% else %}
+                        <span class="badge badge-exceptional">Exceptional</span>
+                    {% endif %}
+                </div>
+
+                <div class="prediction-meta">
+                    <div class="prediction-meta-item">
+                        <span class="prediction-meta-label">Alert Flag</span>
+                        <span class="prediction-meta-value">{{ single_result.alert_flag }}</span>
+                    </div>
+                    <div class="prediction-meta-item">
+                        <span class="prediction-meta-label">Top Prediction</span>
+                        <span class="prediction-meta-value">{{ single_result.predicted_class }}</span>
+                    </div>
+                </div>
+
+                <div class="probability-section">
+                    <div class="section-label">Class Probabilities</div>
+
+                    <div class="probability-row">
+                        <span class="probability-row-label">At-Risk</span>
+                        <div class="probability-bar-track">
+                            <div class="probability-bar-fill at-risk" style="width: {{ (single_result.prob_at_risk * 100)|round(1) }}%;"></div>
+                        </div>
+                        <span class="probability-pct">{{ (single_result.prob_at_risk * 100)|round(1) }}%</span>
+                    </div>
+
+                    <div class="probability-row">
+                        <span class="probability-row-label">Regular</span>
+                        <div class="probability-bar-track">
+                            <div class="probability-bar-fill regular" style="width: {{ (single_result.prob_regular * 100)|round(1) }}%;"></div>
+                        </div>
+                        <span class="probability-pct">{{ (single_result.prob_regular * 100)|round(1) }}%</span>
+                    </div>
+
+                    <div class="probability-row">
+                        <span class="probability-row-label">Exceptional</span>
+                        <div class="probability-bar-track">
+                            <div class="probability-bar-fill exceptional" style="width: {{ (single_result.prob_exceptional * 100)|round(1) }}%;"></div>
+                        </div>
+                        <span class="probability-pct">{{ (single_result.prob_exceptional * 100)|round(1) }}%</span>
+                    </div>
+                </div>
+
+                {% if single_result.risk_reason_summary %}
+                    <div class="risk-reason-box">
+                        <div class="reason-title">Why detected this way?</div>
+                        <div class="reason-text">{{ single_result.risk_reason_summary }}</div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="btn-actions">
+                <a href="{{ url_for('main.index') }}" class="btn btn-back">Go Back</a>
+            </div>
+
+        {% else %}
+            <div class="summary-grid">
+                <div class="summary-card total">
+                    <span class="card-label">Total Students</span>
+                    <span class="card-value">{{ total_students }}</span>
+                </div>
+
+                <div class="summary-card at-risk">
+                    <span class="card-label">At-Risk</span>
+                    <span class="card-value">{{ at_risk_count }}</span>
+                </div>
+
+                <div class="summary-card regular">
+                    <span class="card-label">Regular</span>
+                    <span class="card-value">{{ regular_count }}</span>
+                </div>
+
+                <div class="summary-card exceptional">
+                    <span class="card-label">Exceptional</span>
+                    <span class="card-value">{{ exceptional_count }}</span>
+                </div>
+            </div>
+
+         {% if actual_at_risk_available %}
+    <div class="correctly-flagged">
+        ✓ {{ correctly_flagged_at_risk }} Correctly Flagged At-Risk Students
+    </div>
+{% endif %}
+            {% if at_risk_rows %}
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h2 class="section-title">At-Risk Students</h2>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table class="risk-table">
+                            <thead>
+                                <tr>
+                                    <th>Predicted Class</th>
+                                    <th>At-Risk Prob.</th>
+                                    <th>Regular Prob.</th>
+                                    <th>Exceptional Prob.</th>
+                                    {% if actual_at_risk_available %}
+                                        <th>Actual Class</th>
+                                    {% endif %}
+                                    <th>Reason Summary</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for row in at_risk_rows %}
+                                    <tr>
+                                        <td>{{ row["Predicted_Class"] }}</td>
+                                        <td>{{ row["Prob_At_Risk"]|round(4) }}</td>
+                                        <td>{{ row["Prob_Regular"]|round(4) }}</td>
+                                        <td>{{ row["Prob_Exceptional"]|round(4) }}</td>
+                                        {% if actual_at_risk_available %}
+                                            <td>{{ row.get("Actual_Class", "") }}</td>
+                                        {% endif %}
+                                        <td>{{ row.get("Risk_Reason_Summary", "") }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if prediction_rows %}
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h2 class="section-title">All Predictions</h2>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table class="predictions-table">
+                            <thead>
+                                <tr>
+                                    <th>Predicted Class</th>
+                                    <th>At-Risk Prob.</th>
+                                    <th>Regular Prob.</th>
+                                    <th>Exceptional Prob.</th>
+                                    {% if actual_at_risk_available %}
+                                        <th>Actual Class</th>
+                                    {% endif %}
+                                    <th>Alert Flag</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for row in prediction_rows %}
+                                    <tr class="{% if row['Predicted_Class'] == 'At-risk' %}row-at-risk{% elif row['Predicted_Class'] == 'Exceptional' %}row-exceptional{% endif %}">
+                                        <td>{{ row["Predicted_Class"] }}</td>
+                                        <td>{{ row["Prob_At_Risk"]|round(4) }}</td>
+                                        <td>{{ row["Prob_Regular"]|round(4) }}</td>
+                                        <td>{{ row["Prob_Exceptional"]|round(4) }}</td>
+                                        {% if actual_at_risk_available %}
+                                            <td>{{ row.get("Actual_Class", "") }}</td>
+                                        {% endif %}
+                                        <td>{{ row["Alert_Flag"] }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="btn-actions">
+                {% if output_filename %}
+                    <a href="{{ url_for('main.download_file', filename=output_filename) }}" class="btn btn-download">
+                        Download Predictions CSV
+                    </a>
+                {% endif %}
+                <a href="{{ url_for('main.index') }}" class="btn btn-back">Go Back</a>
+            </div>
+        {% endif %}
+    </div>
 </body>
 </html>

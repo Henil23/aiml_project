@@ -18,4 +18,4 @@ sqlparse==0.5.5
 SQLAlchemy==2.0.49
 alembic==1.18.4
 pyarrow==23.0.1
- 
+

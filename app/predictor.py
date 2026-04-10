@@ -476,30 +476,139 @@ def _extract_reason_frame(df_input: pd.DataFrame) -> pd.DataFrame | None:
         ]].copy()
     except Exception:
         return None
-# manual entry 
 def predict_single_student(form_data: dict):
-    # build one-row dataframe from form input
-    df_input = pd.DataFrame([form_data]).copy()
+    """
+    Manual-entry prediction:
+    - accepts user-friendly values for simple categorical fields
+    - keeps complex coded fields numeric
+    - converts everything into the raw Kaggle-style schema expected by preprocessing
+    """
+
+    def _clean(v):
+        if v is None:
+            return None
+        if isinstance(v, str):
+            v = v.strip()
+            return v if v != "" else None
+        return v
+
+    def _map_value(value, mapping, field_name):
+        value = _clean(value)
+        if value is None:
+            return None
+
+        # already numeric-like -> keep as-is for later numeric conversion
+        try:
+            float(value)
+            return value
+        except Exception:
+            pass
+
+        key = str(value).strip().lower()
+        if key in mapping:
+            return mapping[key]
+
+        raise ValueError(
+            f"Invalid value for '{field_name}': '{value}'. "
+            f"Allowed values: {', '.join(mapping.keys())} or the dataset numeric code."
+        )
+
+    # friendly mappings for fields that are easy to humanize
+    yes_no_map = {
+        "yes": 1,
+        "no": 0,
+        "y": 1,
+        "n": 0,
+        "true": 1,
+        "false": 0
+    }
+
+    gender_map = {
+        "male": 1,
+        "female": 0,
+        "m": 1,
+        "f": 0
+    }
+
+    attendance_map = {
+        "daytime": 1,
+        "evening": 0,
+        "day": 1,
+        "eve": 0
+    }
+
+    # copy and normalize
+    mapped_data = {k: _clean(v) for k, v in form_data.items()}
+
+    # convert human-friendly values for simple binary fields
+    mapped_data["Daytime/evening attendance"] = _map_value(
+        mapped_data.get("Daytime/evening attendance"),
+        attendance_map,
+        "Daytime/evening attendance"
+    )
+
+    mapped_data["Displaced"] = _map_value(
+        mapped_data.get("Displaced"),
+        yes_no_map,
+        "Displaced"
+    )
+
+    mapped_data["Educational special needs"] = _map_value(
+        mapped_data.get("Educational special needs"),
+        yes_no_map,
+        "Educational special needs"
+    )
+
+    mapped_data["Debtor"] = _map_value(
+        mapped_data.get("Debtor"),
+        yes_no_map,
+        "Debtor"
+    )
+
+    mapped_data["Tuition fees up to date"] = _map_value(
+        mapped_data.get("Tuition fees up to date"),
+        yes_no_map,
+        "Tuition fees up to date"
+    )
+
+    mapped_data["Gender"] = _map_value(
+        mapped_data.get("Gender"),
+        gender_map,
+        "Gender"
+    )
+
+    mapped_data["Scholarship holder"] = _map_value(
+        mapped_data.get("Scholarship holder"),
+        yes_no_map,
+        "Scholarship holder"
+    )
+
+    # build one-row dataframe from mapped form input
+    df_input = pd.DataFrame([mapped_data]).copy()
 
     # convert blank strings to missing
     df_input = df_input.replace("", pd.NA)
 
-    # for manual entry, we will use the raw Kaggle-style fields
-    # all required raw columns are numeric-coded in this dataset
+    # confirm all required raw columns exist
     missing = [col for col in RAW_REQUIRED_COLUMNS if col not in df_input.columns]
     if missing:
         raise ValueError(
             "Manual entry is missing required fields: " + ", ".join(missing)
         )
 
+    # convert every required field to numeric
+    # some fields are still expected as dataset numeric codes:
+    # Course, Marital status, Nationality, parents' qualification/occupation, etc.
     for col in RAW_REQUIRED_COLUMNS:
         df_input[col] = pd.to_numeric(df_input[col], errors="coerce")
 
+    # validate missing/invalid numeric-coded fields
     missing_values = [col for col in RAW_REQUIRED_COLUMNS if df_input[col].isna().iloc[0]]
     if missing_values:
         raise ValueError(
-            "Please fill all required manual-entry fields. Missing/invalid values: "
-            + ", ".join(missing_values)
+            "Please fill all required manual-entry fields. "
+            "Some fields still require dataset numeric codes. "
+            "Missing/invalid values: " + ", ".join(missing_values)
         )
 
     reason_df = _extract_reason_frame(df_input)

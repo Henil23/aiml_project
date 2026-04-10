@@ -49,48 +49,81 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="Course">Course</label>
-                        <input type="number" name="Course" id="Course" required>
+                        <select name="Course" id="Course" required>
+                            <option value="">Select course code</option>
+                            {% for value in course_options %}
+                                <option value="{{ value }}">{{ value }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
 
                     <div class="form-group">
                         <label for="DaytimeAttendance">Daytime/evening attendance</label>
-                        <input type="number" name="Daytime/evening attendance" id="DaytimeAttendance" required>
+                        <select name="Daytime/evening attendance" id="DaytimeAttendance" required>
+                            <option value="">Select</option>
+                            <option value="daytime">Daytime</option>
+                            <option value="evening">Evening</option>
+                        </select>
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
                         <label for="Displaced">Displaced</label>
-                        <input type="number" name="Displaced" id="Displaced" required>
+                        <select name="Displaced" id="Displaced" required>
+                            <option value="">Select</option>
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
                     </div>
 
                     <div class="form-group">
                         <label for="SpecialNeeds">Educational special needs</label>
-                        <input type="number" name="Educational special needs" id="SpecialNeeds" required>
+                        <select name="Educational special needs" id="SpecialNeeds" required>
+                            <option value="">Select</option>
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
                         <label for="Debtor">Debtor</label>
-                        <input type="number" name="Debtor" id="Debtor" required>
+                        <select name="Debtor" id="Debtor" required>
+                            <option value="">Select</option>
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
                     </div>
 
                     <div class="form-group">
                         <label for="FeesUpToDate">Tuition fees up to date</label>
-                        <input type="number" name="Tuition fees up to date" id="FeesUpToDate" required>
+                        <select name="Tuition fees up to date" id="FeesUpToDate" required>
+                            <option value="">Select</option>
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
                         <label for="Gender">Gender</label>
-                        <input type="number" name="Gender" id="Gender" required>
+                        <select name="Gender" id="Gender" required>
+                            <option value="">Select</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                        </select>
                     </div>
 
                     <div class="form-group">
                         <label for="ScholarshipHolder">Scholarship holder</label>
-                        <input type="number" name="Scholarship holder" id="ScholarshipHolder" required>
+                        <select name="Scholarship holder" id="ScholarshipHolder" required>
+                            <option value="">Select</option>
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
                     </div>
                 </div>
 
@@ -145,36 +178,66 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="MaritalStatus">Marital status</label>
-                        <input type="number" name="Marital status" id="MaritalStatus" required>
+                        <select name="Marital status" id="MaritalStatus" required>
+                            <option value="">Select marital status code</option>
+                            {% for value in marital_status_options %}
+                                <option value="{{ value }}">{{ value }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
 
                     <div class="form-group">
                         <label for="Nationality">Nationality</label>
-                        <input type="number" name="Nationality" id="Nationality" required>
+                        <select name="Nationality" id="Nationality" required>
+                            <option value="">Select nationality code</option>
+                            {% for value in nationality_options %}
+                                <option value="{{ value }}">{{ value }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
                         <label for="MotherQualification">Mother's qualification</label>
-                        <input type="number" name="Mother's qualification" id="MotherQualification" required>
+                        <select name="Mother's qualification" id="MotherQualification" required>
+                            <option value="">Select mother's qualification code</option>
+                            {% for value in mother_qualification_options %}
+                                <option value="{{ value }}">{{ value }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
 
                     <div class="form-group">
                         <label for="FatherQualification">Father's qualification</label>
-                        <input type="number" name="Father's qualification" id="FatherQualification" required>
+                        <select name="Father's qualification" id="FatherQualification" required>
+                            <option value="">Select father's qualification code</option>
+                            {% for value in father_qualification_options %}
+                                <option value="{{ value }}">{{ value }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
                         <label for="MotherOccupation">Mother's occupation</label>
-                        <input type="number" name="Mother's occupation" id="MotherOccupation" required>
+                        <select name="Mother's occupation" id="MotherOccupation" required>
+                            <option value="">Select mother's occupation code</option>
+                            {% for value in mother_occupation_options %}
+                                <option value="{{ value }}">{{ value }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
 
                     <div class="form-group">
                         <label for="FatherOccupation">Father's occupation</label>
-                        <input type="number" name="Father's occupation" id="FatherOccupation" required>
+                        <select name="Father's occupation" id="FatherOccupation" required>
+                            <option value="">Select father's occupation code</option>
+                            {% for value in father_occupation_options %}
+                                <option value="{{ value }}">{{ value }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
 

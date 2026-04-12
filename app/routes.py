@@ -14,41 +14,40 @@ from flask import (
     jsonify,
 )
 
-from app.predictor import predict_csv, predict_single_student
+from app.predictor import (
+    predict_csv,
+    predict_single_student,
+    COURSE_OPTIONS,
+    MARITAL_STATUS_OPTIONS,
+    NATIONALITY_OPTIONS,
+    PARENT_QUALIFICATION_OPTIONS,
+    PARENT_OCCUPATION_OPTIONS,
+)
 
 main = Blueprint("main", __name__)
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 DATA_DIR = os.path.join(BASE_DIR, "data")
 UPLOAD_DIR = os.path.join(DATA_DIR, "uploads")
-DATASET_PATH = os.path.join(DATA_DIR, "dataset.csv")
 
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 
-def _load_dropdown_options():
-    df = pd.read_csv(DATASET_PATH)
-    df.columns = df.columns.str.strip()
-    df = df.rename(columns={"Nacionality": "Nationality"})
-
-    def opts(col):
-        values = sorted(df[col].dropna().astype(int).unique().tolist())
-        return values
-
+def _dropdown_options():
     return {
-        "course_options": opts("Course"),
-        "marital_status_options": opts("Marital status"),
-        "nationality_options": opts("Nationality"),
-        "mother_qualification_options": opts("Mother's qualification"),
-        "father_qualification_options": opts("Father's qualification"),
-        "mother_occupation_options": opts("Mother's occupation"),
-        "father_occupation_options": opts("Father's occupation"),
+        "course_options": COURSE_OPTIONS,
+        "marital_status_options": MARITAL_STATUS_OPTIONS,
+        "nationality_options": NATIONALITY_OPTIONS,
+        "mother_qualification_options": PARENT_QUALIFICATION_OPTIONS,
+        "father_qualification_options": PARENT_QUALIFICATION_OPTIONS,
+        "mother_occupation_options": PARENT_OCCUPATION_OPTIONS,
+        "father_occupation_options": PARENT_OCCUPATION_OPTIONS,
     }
 
 
 # ─────────────────────────────────────────────
 # Health check
-# GET https://your-app.onrender.com/health
+# GET /health
 # ─────────────────────────────────────────────
 @main.route("/health", methods=["GET"])
 def health():
@@ -56,12 +55,12 @@ def health():
 
 
 # ─────────────────────────────────────────────
-# JSON prediction endpoint
-# POST https://your-app.onrender.com/predict
+# API prediction endpoint
+# POST /predict
 #
-# Accepts two formats:
-#   A) JSON body:  {"students": [{...raw row...}, ...]}
-#   B) CSV file upload: multipart/form-data, field name = "file"
+# Supports:
+#   A) JSON body: {"students": [{...raw row...}, ...]}
+#   B) CSV upload: multipart/form-data with field name "file"
 # ─────────────────────────────────────────────
 @main.route("/predict", methods=["POST"])
 def predict_api():
@@ -81,14 +80,15 @@ def predict_api():
 
         try:
             summary = predict_csv(tmp_path)
-            summary.pop("output_path", None)   # don't expose server paths
+            summary.pop("output_path", None)  # do not expose server path
             return jsonify(summary)
         except ValueError as e:
             return jsonify({"error": str(e)}), 422
         except Exception as e:
             return jsonify({"error": f"Prediction failed: {str(e)}"}), 500
         finally:
-            os.unlink(tmp_path)
+            if os.path.exists(tmp_path):
+                os.unlink(tmp_path)
 
     # ── Format A: JSON body ──
     data = request.get_json(force=True, silent=True)
@@ -128,7 +128,7 @@ def predict_api():
 # ─────────────────────────────────────────────
 @main.route("/", methods=["GET", "POST"])
 def index():
-    dropdown_options = _load_dropdown_options()
+    dropdown_options = _dropdown_options()
 
     if request.method == "POST":
         action = request.form.get("action")
@@ -219,8 +219,8 @@ def index():
                     at_risk_count=1 if single_result["predicted_class"] == "At-risk" else 0,
                     regular_count=1 if single_result["predicted_class"] == "Regular" else 0,
                     exceptional_count=1 if single_result["predicted_class"] == "Exceptional" else 0,
-                    # actual_at_risk_available=False,
-                    # correctly_flagged_at_risk=None,
+                    actual_at_risk_available=False,
+                    correctly_flagged_at_risk=None,
                     output_filename=None,
                     single_result=single_result,
                     at_risk_rows=None,

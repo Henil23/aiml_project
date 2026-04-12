@@ -2,3 +2,9 @@ aiml_project/
 *.pdf
 versions/*
 *.png
+*.db
+*.log
+*.pkl
+img/*
+__pycache__/*
+app/__pycache__/*

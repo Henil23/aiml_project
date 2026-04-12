@@ -931,7 +931,7 @@ tbody td {
 
 /* Row accent for at-risk rows inside the predictions table */
 .predictions-table tbody tr.row-at-risk {
-  background-color: rgba(220, 38, 38, 0.04);
+  background-color: rgba(203, 49, 49, 0.613);
 }
 
 .predictions-table tbody tr.row-at-risk:hover {
@@ -939,7 +939,7 @@ tbody td {
 }
 
 .predictions-table tbody tr.row-exceptional {
-  background-color: rgba(16, 185, 129, 0.03);
+  background-color: rgba(16, 185, 129, 0.445);
 }
 
 .predictions-table tbody tr.row-exceptional:hover {

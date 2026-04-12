@@ -50,9 +50,9 @@
                     <div class="form-group">
                         <label for="Course">Course</label>
                         <select name="Course" id="Course" required>
-                            <option value="">Select course code</option>
-                            {% for value in course_options %}
-                                <option value="{{ value }}">{{ value }}</option>
+                            <option value="">Select course</option>
+                            {% for code, label in course_options.items() %}
+                                <option value="{{ label }}">{{ code }} — {{ label }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -179,9 +179,9 @@
                     <div class="form-group">
                         <label for="MaritalStatus">Marital status</label>
                         <select name="Marital status" id="MaritalStatus" required>
-                            <option value="">Select marital status code</option>
-                            {% for value in marital_status_options %}
-                                <option value="{{ value }}">{{ value }}</option>
+                            <option value="">Select marital status</option>
+                            {% for code, label in marital_status_options.items() %}
+                                <option value="{{ label }}">{{ code }} — {{ label }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -189,9 +189,9 @@
                     <div class="form-group">
                         <label for="Nationality">Nationality</label>
                         <select name="Nationality" id="Nationality" required>
-                            <option value="">Select nationality code</option>
-                            {% for value in nationality_options %}
-                                <option value="{{ value }}">{{ value }}</option>
+                            <option value="">Select nationality</option>
+                            {% for code, label in nationality_options.items() %}
+                                <option value="{{ label }}">{{ code }} — {{ label }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -201,9 +201,9 @@
                     <div class="form-group">
                         <label for="MotherQualification">Mother's qualification</label>
                         <select name="Mother's qualification" id="MotherQualification" required>
-                            <option value="">Select mother's qualification code</option>
-                            {% for value in mother_qualification_options %}
-                                <option value="{{ value }}">{{ value }}</option>
+                            <option value="">Select mother's qualification</option>
+                            {% for code, label in mother_qualification_options.items() %}
+                                <option value="{{ label }}">{{ code }} — {{ label }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -211,9 +211,9 @@
                     <div class="form-group">
                         <label for="FatherQualification">Father's qualification</label>
                         <select name="Father's qualification" id="FatherQualification" required>
-                            <option value="">Select father's qualification code</option>
-                            {% for value in father_qualification_options %}
-                                <option value="{{ value }}">{{ value }}</option>
+                            <option value="">Select father's qualification</option>
+                            {% for code, label in father_qualification_options.items() %}
+                                <option value="{{ label }}">{{ code }} — {{ label }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -223,9 +223,9 @@
                     <div class="form-group">
                         <label for="MotherOccupation">Mother's occupation</label>
                         <select name="Mother's occupation" id="MotherOccupation" required>
-                            <option value="">Select mother's occupation code</option>
-                            {% for value in mother_occupation_options %}
-                                <option value="{{ value }}">{{ value }}</option>
+                            <option value="">Select mother's occupation</option>
+                            {% for code, label in mother_occupation_options.items() %}
+                                <option value="{{ label }}">{{ code }} — {{ label }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -233,9 +233,9 @@
                     <div class="form-group">
                         <label for="FatherOccupation">Father's occupation</label>
                         <select name="Father's occupation" id="FatherOccupation" required>
-                            <option value="">Select father's occupation code</option>
-                            {% for value in father_occupation_options %}
-                                <option value="{{ value }}">{{ value }}</option>
+                            <option value="">Select father's occupation</option>
+                            {% for code, label in father_occupation_options.items() %}
+                                <option value="{{ label }}">{{ code }} — {{ label }}</option>
                             {% endfor %}
                         </select>
                     </div>
